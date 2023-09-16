@@ -2,40 +2,58 @@
 #include <stdlib.h>
 
 #include "strings.h"
+#include "file_processing.h"
+#include "cmd_input.h"
+#include "my_assert.h"
 
-int main(void)
+int main(int argc, char * argv[])
 {
+    system("chcp 65001");
+
+    if (check_cmd_input(argc, argv) == false)
+        return 1;
+
     FILE * fp = NULL;
 
-    if ((fp = file_open("EvgeniyOnegin.txt", "r")) == NULL)
+    if ((fp = file_open("Pushkin/EvgeniyOnegin.txt", "r")) == NULL)
         return 1;
 
     long file_size = get_file_size(fp);
+    long buffer_size = file_size + 1;
 
-    char * buffer = (char *) calloc(file_size + 1, sizeof(char));
-
-    fread(buffer, file_size + 1, 1, fp);
-
-    buffer[file_size] = '\0';
-
-    puts("");
-
-    size_t strings_num = get_strings_num(buffer, file_size + 1);
-
-    char * * arrows = (char * *) calloc(strings_num, sizeof(char *));
-
-    get_arrows(buffer, arrows, strings_num);
-
-    sort_arrows(arrows, strings_num);
-
-    for (size_t i = 0; i < strings_num; i++)
+    char * buffer = NULL;
+    if ((buffer = (char *) calloc(file_size + 1, sizeof(char))) == NULL)
     {
-        printf("%s\n", arrows[i]);
+        printf("Can't allocate memory.");
+
+        return 1;
     }
 
-    fclose (fp);
+    buffer = read_file(buffer, buffer_size, fp);
+
+    buffer[buffer_size - 1] = '\0';
+
+    size_t strings_num = get_strings_num(buffer);
+
+    char * * pointers = NULL;
+    if ((pointers = (char * *) calloc(strings_num, sizeof(char *))) == NULL)
+    {
+        printf("Can't allocate memory.");
+
+        return 1;
+    }
+
+    get_pointers(buffer, pointers, strings_num);
+
+    run_flag(pointers, strings_num);
+
+    show_strings(pointers, strings_num);
+
+    fclose(fp);
     free(buffer);
-    free(arrows);
+    free(pointers);
+
+    getchar();
 
     return 0;
 }
