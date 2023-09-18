@@ -53,7 +53,7 @@ bool check_cmd_input(int argc, char * * argv)
 {
     MY_ASSERT(argv != nullptr);
 
-    CmdLineArg * flags[SUPPORTED_FLAGS_NUMBER] = {&BUBBLE, &QSORT, &NORMAL, &REVERSE};
+    CmdLineArg * flags[SUPPORTED_FLAGS_NUMBER] = {&BUBBLE, &QSORT, &NORMAL, &REVERSE, &MYQSORT};
 
     for (int i = 0; i < SUPPORTED_FLAGS_NUMBER; i++)
     {
@@ -69,14 +69,13 @@ bool check_cmd_input(int argc, char * * argv)
                 else
                 {
                     printf("Error. Please, use %s %s\n", argv[0], flags[i]->help);
-                    printf("or use %s\n", argv[0]);
                     return false;
                 }
             }
         }
     }
 
-    if ((QSORT.necessity == false && BUBBLE.necessity == false) || (NORMAL.necessity == false && REVERSE.necessity == false))
+    if ((QSORT.necessity == false && BUBBLE.necessity == false && MYQSORT.necessity == false) || (NORMAL.necessity == false && REVERSE.necessity == false))
     {
         printf("Error. Please, use: %s --*sorter* --*comparator_mode*.\nAvailable sorters flags: --qsort, --bubble.\nAvailavle comparator mode flags: --normal, --reverse", argv[0]);
 
@@ -96,6 +95,10 @@ void run_flag(char * * pointers, const size_t strings_num)
     else if (QSORT.necessity)
     {
         run_qsort(pointers, strings_num);
+    }
+    else if (MYQSORT.necessity)
+    {
+        quick_sort(pointers, strings_num);
     }
     else
     {

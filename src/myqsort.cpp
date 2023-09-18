@@ -18,14 +18,17 @@ void quick_sort(char * * strings, const size_t size)
 
 int quick_sort1(char * * left, char * * right)
 {
-    if (&right - &left <= 1)
+    if (right - left <= 1)
     {
         return 0;
     }
 
+
     char * * abs_left  = left;
     char * * abs_right = right;
+    show_pointers(&abs_left, &abs_right - &abs_left, &left, &right);
     char * * middle = partition(left, right);
+
 
     quick_sort1(abs_left, middle);
     quick_sort1(middle, abs_right);
@@ -67,7 +70,6 @@ char * * * get_bad_string_left(char * * * left, const char * fundament, char * c
         printf("get_bad_string_left() step\n");
     }
 
-
     return left;
 }
 
@@ -84,4 +86,41 @@ char * * * get_bad_string_right(char * * * right, const char * fundament, char *
 
 
     return right;
+}
+
+
+void show_pointers(char * * * pointers, const size_t num, char * * * left, char * * * right)
+{
+    MY_ASSERT(pointers != nullptr && left != nullptr && right != nullptr);
+    char * * * tmp = pointers;
+
+    puts("");
+
+    while (tmp < left)
+    {
+        printf(CYAN_COLOR "%-3d" DEFAULT_COLOR, (tmp - pointers));
+        tmp++;
+    }
+
+    printf(BLUE_COLOR "%-3d" DEFAULT_COLOR, (tmp - pointers));
+    tmp++;
+
+    while (tmp < right)
+    {
+        printf(GREEN_COLOR "%-3d" DEFAULT_COLOR, (tmp - pointers));
+        tmp++;
+    }
+
+    printf(RED_COLOR "%-3d" DEFAULT_COLOR, (tmp - pointers));
+    tmp++;
+
+    while (tmp < pointers + num)
+    {
+        printf(MAGENTA_COLOR "%-3d" DEFAULT_COLOR, (tmp - pointers));
+        tmp++;
+    }
+
+    printf("\n");
+
+    puts("");
 }

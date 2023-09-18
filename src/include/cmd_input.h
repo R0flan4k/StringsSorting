@@ -9,13 +9,13 @@
         const char * help; ///< How to use this flag.
     };
 
-    const int SUPPORTED_FLAGS_NUMBER = 4; ///< Number of supported flags.
+    const int SUPPORTED_FLAGS_NUMBER = 5; ///< Number of supported flags.
 
     extern CmdLineArg BUBBLE;
     extern CmdLineArg QSORT;
     extern CmdLineArg NORMAL;
     extern CmdLineArg REVERSE;
-    // extern CmdLineArg MYQSORT;
+    extern CmdLineArg MYQSORT;
 
     bool check_cmd_input(int argc, char * * argv);
     void run_flag(char * * pointers, const size_t strings_num);
