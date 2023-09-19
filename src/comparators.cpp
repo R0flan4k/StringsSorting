@@ -10,8 +10,8 @@
 
 int reverse_cmp(const void * p1, const void * p2)
 {
-    const char * * string1 = (const char * *) p1;
-    const char * * string2 = (const char * *) p2;
+    const char * const * string1 = (const char * const *) p1;
+    const char * const * string2 = (const char * const *) p2;
 
     int string1_length = strlen(*string1) - 1;
     int string2_length = strlen(*string2) - 1;
@@ -97,8 +97,8 @@ int reverse_strcmp(const char * string1, const char * string2)
 
 int normal_cmp(const void * p1, const void * p2)
 {
-    const char * * string1 = (const char * *) p1;
-    const char * * string2 = (const char * *) p2;
+    const char * const * string1 = (const char * const *) p1;
+    const char * const * string2 = (const char * const *) p2;
 
     int i = 0;
 

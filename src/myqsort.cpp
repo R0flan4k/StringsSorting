@@ -8,27 +8,26 @@
 #include "comparators.h"
 
 
-void quick_sort(char * * strings, const size_t size)
+void quick_sort(void * p, const size_t strings_num, const size_t size, int (*comparator)(const void *, const void *))
 {
-    printf("%p and %p\n", strings, strings + size - 1);
+    char * * strings = (char * *) p;
 
-    quick_sort1(strings, &strings[size - 1]); // ??????????????????//
+    quick_sort1(strings, &strings[strings_num - 1]); // ??????????????????//
 }
 
 
 int quick_sort1(char * * left, char * * right)
 {
+    printf(RED_COLOR "%d\n" DEFAULT_COLOR, right - left);
+
     if (right - left <= 1)
     {
         return 0;
     }
 
-
     char * * abs_left  = left;
     char * * abs_right = right;
-    show_pointers(&abs_left, &abs_right - &abs_left, &left, &right);
     char * * middle = partition(left, right);
-
 
     quick_sort1(abs_left, middle);
     quick_sort1(middle, abs_right);
@@ -47,24 +46,37 @@ char * * partition(char * * left, char * * right)
 
     char * fundament_string = *fundament;
 
-    printf("%p\n%p\n", &left, &right);
+    int left_cmp = 0, right_cmp = 0;
 
-    while (get_bad_string_left(&left, fundament_string, &abs_right) < get_bad_string_right(&right, fundament_string, &abs_left))
+    show_pointers(abs_left, abs_right - abs_left, left, right);
+
+    while (left < right)
     {
-        puts("");
-        printf("%p\n%p\n", &left, &right);
-        switch_strings(&left, &right);
+        while ((left_cmp = reverse_strcmp(*left, fundament_string)) > 0 && left < right)
+        {
+            left++;
+        }
+
+        while ((right_cmp = reverse_strcmp(*right, fundament_string)) <= 0 && left < right)
+        {
+            right--;
+        }
+
+        show_pointers(abs_left, abs_right - abs_left, left, right);
+
+        if (left_cmp <= 0 && right_cmp > 0)
+            switch_strings(left, right);
     }
 
     return left;
 }
 
 
-char * * * get_bad_string_left(char * * * left, const char * fundament, char * const * const * abs_right)
+char * * get_bad_string_left(char * * left, const char * fundament, char * const * abs_right)
 {
     printf("in get_bad_string_left()\n");
 
-    while (reverse_strcmp(*(*left), fundament) > 0 && left < abs_right)
+    while (reverse_strcmp(*left, fundament) > 0 && left < abs_right)
     {
         left++;
         printf("get_bad_string_left() step\n");
@@ -74,11 +86,11 @@ char * * * get_bad_string_left(char * * * left, const char * fundament, char * c
 }
 
 
-char * * * get_bad_string_right(char * * * right, const char * fundament, char * const * const * abs_left)
+char * * get_bad_string_right(char * * right, const char * fundament, char * const * abs_left)
 {
     printf("In get_bad_string_right()\n");
 
-    while (reverse_strcmp(*(*right), fundament) <= 0 && right > abs_left)
+    while (reverse_strcmp(*right, fundament) <= 0 && right > abs_left)
     {
         right--;
         printf("get_bad_string_right() step\n");
@@ -89,10 +101,10 @@ char * * * get_bad_string_right(char * * * right, const char * fundament, char *
 }
 
 
-void show_pointers(char * * * pointers, const size_t num, char * * * left, char * * * right)
+void show_pointers(char * * pointers, const size_t num, char * * left, char * * right)
 {
     MY_ASSERT(pointers != nullptr && left != nullptr && right != nullptr);
-    char * * * tmp = pointers;
+    char * * tmp = pointers;
 
     puts("");
 

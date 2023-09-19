@@ -20,8 +20,8 @@ FILE * file_open(const char * file_name, const char * mode)
     FILE * fp = NULL;
 
     if ((fp = fopen(file_name, mode)) == NULL)
-    {                                                    
-        printf("File error");
+    {
+        printf("File error.");
     }
 
     return fp;
@@ -30,7 +30,13 @@ FILE * file_open(const char * file_name, const char * mode)
 
 char * read_file(char * buffer, const size_t buffer_size, FILE * fp)
 {
-    fread(buffer, buffer_size, 1, fp);
+    int boo;
+    if ((boo = fread(buffer, buffer_size, 1, fp)) != 0)
+    {
+        printf("Error. Can't read the file.\n");
+
+        return NULL;
+    }
 
     return buffer;
 }

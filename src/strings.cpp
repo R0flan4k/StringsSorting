@@ -37,10 +37,10 @@ size_t get_strings_num(char * buffer)
 }
 
 
-void get_pointers(const char * buffer, char * pointers[], const size_t strings_num)
+void get_pointers(const char * buffer, const char * pointers[], const size_t strings_num)
 {
     size_t i = 0;
-    char * string_pointer = const_cast <char *> (buffer);
+    char const * string_pointer = buffer;
 
     while (i < strings_num)
     {
@@ -53,9 +53,9 @@ void get_pointers(const char * buffer, char * pointers[], const size_t strings_n
 }
 
 
-void switch_strings(char * * * string1, char * * * string2)
+void switch_strings(char * * string1, char * * string2)
 {
-    char * * tmp_string = *string1;
+    char * tmp_string = *string1;
 
     *string1 = *string2;
     *string2 = tmp_string;
@@ -68,4 +68,10 @@ void show_strings(const char * const * strings, const size_t strings_num)
     {
         printf("%s\n", strings[i]);
     }
+}
+
+
+void sort_strings(const char * * pointers, const size_t strings_num, int (*comparator)(const void *, const void *), void (*sorter)(void *, size_t, size_t, int (*)(const void *, const void *)))
+{
+    sorter(pointers, strings_num, sizeof(char * *), comparator);
 }

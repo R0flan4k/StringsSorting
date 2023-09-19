@@ -2,11 +2,11 @@
 
 #include "bubblesort.h"
 #include "comparators.h"
+#include "strings.h"
 
-
-void bubble_sort(char * * pointers, const size_t strings_num, int (*comparator)(const void *, const void *))
+void bubble_sort(void * p, const size_t strings_num, const size_t size, int (*comparator)(const void *, const void *))
 {
-    char * tmp_pointer = NULL;
+    char * * pointers = (char * *) p;
 
     for (size_t i = 0; i < strings_num; i++)
     {
@@ -16,9 +16,7 @@ void bubble_sort(char * * pointers, const size_t strings_num, int (*comparator)(
 
             if (compare > 0)
             {
-                tmp_pointer = pointers[i];
-                pointers[i] = pointers[j];
-                pointers[j] = tmp_pointer;
+                switch_strings(&pointers[i], &pointers[j]);
             }
         }
     }

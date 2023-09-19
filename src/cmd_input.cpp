@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "cmd_input.h"
@@ -8,54 +9,73 @@
 #include "bubblesort.h"
 #include "comparators.h"
 
+int (*COMPARATOR)(const void *, const void *) = NULL;
+void (*SORTER)(void *, size_t, size_t, int (*)(const void *, const void *)) = NULL;
+const char * FILE_NAME = NULL;
+static char * * cmd_input = NULL;
+
 CmdLineArg BUBBLE = {
-    .name =         "--bubble",
-    .num_of_param = 0,
-    .necessity =    false,
-    .argc_number =  0,
-    .help =         "--bubble"
+    .name =          "--bubble",
+    .num_of_param =  0,
+    .flag_function = set_flag_bubblesort,
+    .argc_number =   0,
+    .help =          "--bubble"
 };
 
 CmdLineArg QSORT = {
-    .name =         "--qsort",
-    .num_of_param = 0,
-    .necessity =    false,
-    .argc_number =  0,
-    .help =         "--qsort"
+    .name =          "--qsort",
+    .num_of_param =  0,
+    .flag_function = set_flag_qsort,
+    .argc_number =   0,
+    .help =          "--qsort"
 };
 
 CmdLineArg MYQSORT = {
-    .name =         "--myqsort",
-    .num_of_param = 0,
-    .necessity =    false,
-    .argc_number =  0,
-    .help =         "--myqsort"
+    .name =          "--myqsort",
+    .num_of_param =  0,
+    .flag_function = set_flag_myqsort,
+    .argc_number =   0,
+    .help =          "--myqsort"
 };
 
 CmdLineArg NORMAL = {
-    .name =         "--normal",
-    .num_of_param = 0,
-    .necessity =    false,
-    .argc_number =  0,
-    .help =         "--normal"
+    .name =          "--normal",
+    .num_of_param =  0,
+    .flag_function = set_flag_normal,
+    .argc_number =   0,
+    .help =          "--normal"
 };
 
 CmdLineArg REVERSE = {
-    .name =         "--reverse",
-    .num_of_param = 0,
-    .necessity =    false,
-    .argc_number =  0,
-    .help =         "--reverse"
+    .name =          "--reverse",
+    .num_of_param =  0,
+    .flag_function = set_flag_reverse,
+    .argc_number =   0,
+    .help =          "--reverse"
 };
+
+CmdLineArg SOURCE = {
+    .name =          "--source",
+    .num_of_param =  1,
+    .flag_function = set_flag_source,
+    .argc_number =   0,
+    .help =          "--source *file name*"
+};
+
 
 
 bool check_cmd_input(int argc, char * * argv)
 {
     MY_ASSERT(argv != nullptr);
 
-    CmdLineArg * flags[SUPPORTED_FLAGS_NUMBER] = {&BUBBLE, &QSORT, &NORMAL, &REVERSE, &MYQSORT};
+    cmd_input = argv;
 
-    for (int i = 0; i < SUPPORTED_FLAGS_NUMBER; i++)
+    const char * program_name = argv[0];
+
+    CmdLineArg * flags[] = {&BUBBLE, &QSORT, &NORMAL, &REVERSE, &MYQSORT, &SOURCE};
+    size_t flags_array_size = sizeof(flags) / sizeof(flags[0]);
+
+    for (size_t i = 0; i  < flags_array_size; i++)
     {
         for (int j = 1; j < argc; j++)
         {
@@ -64,20 +84,23 @@ bool check_cmd_input(int argc, char * * argv)
                 if (argc > j + flags[i]->num_of_param)
                 {
                     flags[i]->argc_number = j;
-                    flags[i]->necessity = true;
+
+                    flags[i]->flag_function();
                 }
                 else
                 {
-                    printf("Error. Please, use %s %s\n", argv[0], flags[i]->help);
+                    printf("Error. Please, use %s %s\n", program_name, flags[i]->help);
                     return false;
                 }
             }
         }
     }
 
-    if ((QSORT.necessity == false && BUBBLE.necessity == false && MYQSORT.necessity == false) || (NORMAL.necessity == false && REVERSE.necessity == false))
+    if (SORTER == NULL || COMPARATOR == NULL || FILE_NAME == NULL)
     {
-        printf("Error. Please, use: %s --*sorter* --*comparator_mode*.\nAvailable sorters flags: --qsort, --bubble.\nAvailavle comparator mode flags: --normal, --reverse", argv[0]);
+        printf("Error. Please, use: %s --*sorter* --*comparator mode* --source *file name*.\n"
+               "Available sorters flags: --qsort, --bubble.\n"
+               "Availavle comparator mode flags: --normal, --reverse\n", program_name);
 
         return false;
     }
@@ -86,56 +109,37 @@ bool check_cmd_input(int argc, char * * argv)
 }
 
 
-void run_flag(char * * pointers, const size_t strings_num)
+void set_flag_bubblesort(void)
 {
-    if (BUBBLE.necessity)
-    {
-        run_bubble_sort(pointers, strings_num);
-    }
-    else if (QSORT.necessity)
-    {
-        run_qsort(pointers, strings_num);
-    }
-    else if (MYQSORT.necessity)
-    {
-        quick_sort(pointers, strings_num);
-    }
-    else
-    {
-        MY_ASSERT(0 && "NO FLAG");
-    }
+    SORTER = bubble_sort;
 }
 
 
-void run_bubble_sort(char * * pointers, const size_t strings_num)
+void set_flag_qsort(void)
 {
-    if (NORMAL.necessity)
-    {
-        bubble_sort(pointers, strings_num, normal_cmp);
-    }
-    else if (REVERSE.necessity)
-    {
-        bubble_sort(pointers, strings_num, reverse_cmp);
-    }
-    else
-    {
-        MY_ASSERT(0 && "NO FLAG");
-    }
+    SORTER = qsort;
 }
 
 
-void run_qsort(char * * pointers, const size_t strings_num)
+void set_flag_myqsort(void)
 {
-    if (NORMAL.necessity)
-    {
-        qsort(pointers, strings_num, sizeof(char * *), normal_cmp);
-    }
-    else if (REVERSE.necessity)
-    {
-        qsort(pointers, strings_num, sizeof(char * *), reverse_cmp);
-    }
-    else
-    {
-        MY_ASSERT(0 && "NO FLAG");
-    }
+    SORTER = quick_sort;
+}
+
+
+void set_flag_normal(void)
+{
+    COMPARATOR = normal_cmp;
+}
+
+
+void set_flag_reverse(void)
+{
+    COMPARATOR = reverse_cmp;
+}
+
+
+void set_flag_source(void)
+{
+    FILE_NAME = cmd_input[SOURCE.argc_number + 1];
 }

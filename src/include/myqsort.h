@@ -8,11 +8,11 @@
     #define MAGENTA_COLOR "\x1b[35m"
     #define DEFAULT_COLOR "\x1b[0m"
 
-    void quick_sort(char * * strings, const size_t size);
+    void quick_sort(void * p, const size_t strings_num, const size_t size, int (*comparator)(const void *, const void *));
     int quick_sort1(char * * left, char * * right);
     char * * partition(char * * left, char * * right);
-    char * * * get_bad_string_left(char * * * left, const char * fundament, char * const * const * abs_right);
-    char * * * get_bad_string_right(char * * * right, const char * fundament, char * const * const * abs_left);
-    void show_pointers(char * * * pointers, const size_t num, char * * * left, char * * * right);
+    char * * get_bad_string_left(char * * left, const char * fundament, char * const * abs_right);
+    char * * get_bad_string_right(char * * right, const char * fundament, char * const * abs_left);
+    void show_pointers(char * * pointers, const size_t num, char * * left, char * * right);
 
 #endif // MYQSORT_H
