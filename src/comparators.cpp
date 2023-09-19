@@ -10,6 +10,9 @@
 
 int reverse_cmp(const void * p1, const void * p2)
 {
+    MY_ASSERT(p1 != nullptr);
+    MY_ASSERT(p2 != nullptr);
+
     const char * const * string1 = (const char * const *) p1;
     const char * const * string2 = (const char * const *) p2;
 
