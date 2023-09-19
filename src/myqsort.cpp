@@ -12,60 +12,66 @@ void quick_sort(void * p, const size_t strings_num, const size_t size, int (*com
 {
     char * * strings = (char * *) p;
 
-    quick_sort1(strings, &strings[strings_num - 1]); // ??????????????????//
+    quick_sort1(strings, strings_num, 0, strings_num - 1); // ??????????????????//
 }
 
 
-int quick_sort1(char * * left, char * * right)
+void quick_sort1(char * * strings, const size_t strings_num, int left, int right)
 {
     printf(RED_COLOR "%d\n" DEFAULT_COLOR, right - left);
 
-    if (right - left <= 1)
+    if (right - left > 1)
     {
-        return 0;
+        int abs_left =  left;
+        int abs_right = right;
+        int middle = partition(strings, strings_num, left, right);
+        int lmiddle = middle - 1;
+        int rmiddle = middle + 1;
+
+        MY_ASSERT(lmiddle >= 0);
+        MY_ASSERT(rmiddle <= strings_num - 1);
+
+        quick_sort1(strings, strings_num, abs_left, lmiddle);
+        quick_sort1(strings, strings_num, rmiddle, abs_right);
     }
-
-    char * * abs_left  = left;
-    char * * abs_right = right;
-    char * * middle = partition(left, right);
-
-    quick_sort1(abs_left, middle);
-    quick_sort1(middle, abs_right);
-
-    return 0;
 }
 
 
-char * * partition(char * * left, char * * right)
+int partition(char * * strings, const size_t strings_num, int left, int right)
 {
     srand((unsigned int) time(0));
 
-    char * * abs_left  = left;
-    char * * abs_right = right;
-    char * * fundament = left + (rand() % (right - left - 1));
+    int abs_left  = left;
+    int abs_right = right;
+    int randomchik = rand() % (right - left - 1);
+    int fundament = left + (randomchik);
 
-    char * fundament_string = *fundament;
+    puts("");
+    printf("%d\n", randomchik);
+    puts("");
+
+    char * fundament_string = strings[fundament];
 
     int left_cmp = 0, right_cmp = 0;
 
-    show_pointers(abs_left, abs_right - abs_left, left, right);
+    show_pointers(strings, strings_num, left, right);
 
     while (left < right)
     {
-        while ((left_cmp = reverse_strcmp(*left, fundament_string)) > 0 && left < right)
+        while ((left_cmp = reverse_strcmp(strings[left], fundament_string)) < 0 && left < right)
         {
             left++;
         }
 
-        while ((right_cmp = reverse_strcmp(*right, fundament_string)) <= 0 && left < right)
+        while ((right_cmp = reverse_strcmp(strings[right], fundament_string)) >= 0 && left < right)
         {
             right--;
         }
 
-        show_pointers(abs_left, abs_right - abs_left, left, right);
+        show_pointers(strings, strings_num, left, right);
 
-        if (left_cmp <= 0 && right_cmp > 0)
-            switch_strings(left, right);
+        if (left_cmp >= 0 && right_cmp < 0)
+            switch_strings(&strings[left], &strings[right]);
     }
 
     return left;
@@ -101,34 +107,35 @@ char * * get_bad_string_right(char * * right, const char * fundament, char * con
 }
 
 
-void show_pointers(char * * pointers, const size_t num, char * * left, char * * right)
+void show_pointers(char * * pointers, const size_t num, int left, int right)
 {
-    MY_ASSERT(pointers != nullptr && left != nullptr && right != nullptr);
-    char * * tmp = pointers;
+    MY_ASSERT(pointers != nullptr);
+
+    int tmp = 0;
 
     puts("");
 
     while (tmp < left)
     {
-        printf(CYAN_COLOR "%-3d" DEFAULT_COLOR, (tmp - pointers));
+        printf(CYAN_COLOR "%-5d" DEFAULT_COLOR, (tmp));
         tmp++;
     }
 
-    printf(BLUE_COLOR "%-3d" DEFAULT_COLOR, (tmp - pointers));
+    printf(BLUE_COLOR "%-5d" DEFAULT_COLOR, (tmp));
     tmp++;
 
     while (tmp < right)
     {
-        printf(GREEN_COLOR "%-3d" DEFAULT_COLOR, (tmp - pointers));
+        printf(GREEN_COLOR "%-5d" DEFAULT_COLOR, (tmp));
         tmp++;
     }
 
-    printf(RED_COLOR "%-3d" DEFAULT_COLOR, (tmp - pointers));
+    printf(RED_COLOR "%-5d" DEFAULT_COLOR, (tmp));
     tmp++;
 
-    while (tmp < pointers + num)
+    while (tmp < num)
     {
-        printf(MAGENTA_COLOR "%-3d" DEFAULT_COLOR, (tmp - pointers));
+        printf(MAGENTA_COLOR "%-5d" DEFAULT_COLOR, (tmp));
         tmp++;
     }
 
