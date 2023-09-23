@@ -99,7 +99,7 @@ bool check_cmd_input(int argc, char * * argv)
     if (SORTER == NULL || COMPARATOR == NULL || FILE_NAME == NULL)
     {
         printf("Error. Please, use: %s --*sorter* --*comparator mode* --source *file name*.\n"
-               "Available sorters flags: --qsort, --bubble.\n"
+               "Available sorters flags: --qsort, --myqsort, --bubble.\n"
                "Availavle comparator mode flags: --normal, --reverse\n", program_name);
 
         return false;
