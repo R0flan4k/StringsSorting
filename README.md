@@ -14,7 +14,7 @@ This program can sort the text from your file. The example is a excerpt from Ale
 
 - Primitive bubble sorter.
 - Standart quick sorter.
-- My quick sorter.
+- My version of quick sorter.
 
 ## Installation:
 Bend the repository and compile the files
