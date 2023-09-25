@@ -52,7 +52,7 @@ int reverse_cmp(const void * p1, const void * p2)
 
 int skip_nonalpha(const char * string, int index)
 {
-    while (!isalpha(string[index]))
+    while (!isalpha(string[index]) && index > 0)
         (index)--;
 
     return index;
